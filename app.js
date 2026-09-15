@@ -557,19 +557,39 @@ function importData(file) {
       showToast('That file is not valid JSON.');
       return;
     }
-    if (!Array.isArray(imported.kids) || !Array.isArray(imported.matches)) {
-      showToast('That file needs kids and matches arrays.');
-      return;
-    }
-    const before = data.matches.length;
-    data = mergeImport(imported);
-    if (!data.kids.some(kid => kid.id === selectedKid)) selectedKid = data.kids[0]?.id || '';
-    populateKids();
-    render();
-    showToast(`Journal imported: ${data.matches.length - before >= 0 ? '+' : ''}${data.matches.length - before} match records.`);
+    if (!applyImport(imported, 'Journal imported')) showToast('That file needs kids and matches arrays.');
   };
   reader.readAsText(file);
   $('file-input').value = '';
+}
+
+function applyImport(imported, label) {
+  if (!Array.isArray(imported?.kids) || !Array.isArray(imported?.matches)) return false;
+  const before = data.matches.length;
+  data = mergeImport(imported);
+  if (!data.kids.some(kid => kid.id === selectedKid)) selectedKid = data.kids[0]?.id || '';
+  populateKids();
+  render();
+  const added = data.matches.length - before;
+  if (label) showToast(`${label}: ${added >= 0 ? '+' : ''}${added} match records.`);
+  return true;
+}
+
+// Load sync-output.json from the project folder when served locally by start.command. The website has no data file, so this quietly does nothing there.
+async function loadPublishedData() {
+  if (location.protocol === 'file:') return;
+  try {
+    const response = await fetch('sync-output.json', {cache: 'no-store'});
+    if (!response.ok) return;
+    const published = await response.json();
+    const isNew = published.updatedAt && published.updatedAt !== data.publishedAt;
+    if (applyImport({...published, updatedAt: published.updatedAt}, isNew ? `Loaded sync from ${formatDate(published.updatedAt)}` : '')) {
+      data.publishedAt = published.updatedAt;
+      saveData();
+    }
+  } catch {
+    // No published file, or it is not valid JSON; the Import button still works.
+  }
 }
 
 function populateKids() {
@@ -630,3 +650,4 @@ $('file-input').addEventListener('change', event => {
 
 populateKids();
 render();
+loadPublishedData();

@@ -2,8 +2,11 @@
 .env
 .env.*
 !.env.example
-sync-output.json
 __pycache__/
 sync-debug/
 sync-browser-profile/
 sync-chrome-profile*/
+
+# Personal data: stays on this computer, never pushed or published
+kids.json
+sync-output.json

@@ -23,7 +23,7 @@
           <button class="nav-item" data-view="sources"><span>↗</span>Sources & sync</button>
         </nav>
         <div class="sidebar-foot">
-          <div class="privacy-note"><span class="status-dot"></span><div><strong>Private by default</strong><small>Data stays in this browser.</small></div></div>
+          <div class="privacy-note"><span class="status-dot"></span><div><strong>Private data</strong><small>Imported data stays in this browser.</small></div></div>
           <div class="version">ROLL CALL / 01</div>
         </div>
       </aside>
@@ -82,7 +82,11 @@
             <details class="chart-table"><summary>Show table</summary><div class="table-scroll"><table id="results-table"></table></div></details>
           </section>
         </div>
-        <div id="sources-view" class="view"><div class="page-heading"><div><div class="eyebrow">keep it current</div><h2>Sources & sync</h2></div></div><section class="source-panel"><div class="source-icon">↗</div><div><h3>Bring in new results</h3><p>Export or prepare a JSON file with the format below, then import it here. Your journal is stored locally and never uploaded.</p><button class="primary-button" id="source-import">Import JSON <span>⇧</span></button></div></section><section class="source-panel muted"><div class="source-icon">◎</div><div><h3>Connector-ready</h3><p>Smoothcomp profiles can be private, so its connector will need an authenticated local service. Jits.gg can be connected by public profile URL. Credentials should live in a local environment file, never in this page.</p><code>kids.json · matches.json · .env.local</code></div></section></div>
+        <div id="sources-view" class="view">
+          <div class="page-heading"><div><div class="eyebrow">keep it current</div><h2>Sources & sync</h2></div></div>
+          <section class="source-panel"><div class="source-icon">↻</div><div><h3>On your computer</h3><p>Run <code>python3 sync_data.py</code>, then <code>./start.command</code>. The app at <code>localhost:4173</code> loads <code>sync-output.json</code> from the project folder automatically.</p></div></section>
+          <section class="source-panel muted"><div class="source-icon">⇧</div><div><h3>On the website or another device</h3><p>The website has no match data. Import your <code>sync-output.json</code> here; it is saved in this browser only, and importing again adds new matches without duplicating anything.</p><button class="primary-button" id="source-import">Import JSON <span>⇧</span></button></div></section>
+        </div>
       </section>
     </main>
     <div id="toast" class="toast" role="status"></div>

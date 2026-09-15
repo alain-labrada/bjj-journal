@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102b2a" />
+    <title>Roll Call | BJJ competition journal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">✳</span><span>roll call</span></div>
+        <div class="side-caption">family fight log</div>
+        <nav class="nav-list" aria-label="Primary navigation">
+          <button class="nav-item active" data-view="overview"><span>◒</span>Overview</button>
+          <button class="nav-item" data-view="matches"><span>＋</span>All matches</button>
+          <button class="nav-item" data-view="opponents"><span>◎</span>Opponents</button>
+          <button class="nav-item" data-view="reports"><span>▥</span>Reports</button>
+          <button class="nav-item" data-view="sources"><span>↗</span>Sources & sync</button>
+        </nav>
+        <div class="sidebar-foot">
+          <div class="privacy-note"><span class="status-dot"></span><div><strong>Private by default</strong><small>Data stays in this browser.</small></div></div>
+          <div class="version">ROLL CALL / 01</div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div><div class="eyebrow">competition archive</div><h1 id="page-title">The family ledger</h1></div>
+          <div class="top-actions"><span class="last-sync" id="last-sync">Last updated today</span><button class="icon-button" id="import-button" title="Import a journal JSON file" aria-label="Import journal data">⇧</button><input id="file-input" type="file" accept="application/json,.json" hidden /></div>
+        </header>
+
+        <div class="toolbar">
+          <label class="select-wrap"><span class="label">Athlete</span><select id="kid-select"></select></label><button class="primary-button add-kid-button" id="add-kid-button">Add kid <span>＋</span></button>
+          <label class="search-wrap"><span class="label">Search the ledger</span><input id="search-input" type="search" placeholder="Opponent, event, division..." /></label>
+          <button class="text-button" id="clear-search">Clear</button>
+        </div>
+        <form id="add-kid-panel" class="add-kid-panel" hidden>
+          <div><div class="eyebrow">new athlete</div><h3>Add a kid to the ledger</h3></div>
+          <div class="kid-form-grid"><label><span class="label">Name</span><input id="new-kid-name" required placeholder="Full name" /></label><label><span class="label">Jits.gg profile URL <em>optional</em></span><input id="new-kid-jits" type="url" placeholder="https://jits.gg/..." /></label><label><span class="label">Smoothcomp profile URL <em>optional</em></span><input id="new-kid-smoothcomp" type="url" placeholder="https://smoothcomp.com/..." /></label></div>
+          <div class="form-actions"><button type="button" class="text-button" id="cancel-add-kid">Cancel</button><button type="submit" class="primary-button">Save kid <span>→</span></button></div>
+        </form>
+
+        <div id="overview-view" class="view active-view">
+          <div class="intro-row"><div><div class="eyebrow">selected athlete</div><h2 id="kid-name">No athletes yet</h2></div><div class="record-pill"><span id="match-count">0</span> matches logged</div></div>
+          <section class="stat-grid" aria-label="Athlete summary"><article class="stat-card dark"><span class="stat-label">Matches</span><strong id="stat-matches">0</strong><small>across all events</small></article><article class="stat-card"><span class="stat-label">Unique opponents</span><strong id="stat-opponents">0</strong><small>repeat faces stay linked</small></article><article class="stat-card"><span class="stat-label">Competitions</span><strong id="stat-events">0</strong><small>where they showed up</small></article><article class="stat-card accent"><span class="stat-label">Latest weight</span><strong id="stat-weight">—</strong><small id="stat-division">No division yet</small></article></section>
+          <div class="section-heading"><div><div class="eyebrow">opponent history</div><h3>Familiar faces</h3></div><button class="subtle-button" data-view-target="opponents">View all <span>→</span></button></div>
+          <div id="opponent-preview" class="opponent-grid"></div>
+          <div class="section-heading match-heading"><div><div class="eyebrow">recent activity</div><h3>Latest matches</h3></div><button class="subtle-button" data-view-target="matches">All matches <span>→</span></button></div>
+          <div id="match-preview" class="match-list"></div>
+          <section id="source-stats" class="source-stats" hidden></section>
+        </div>
+
+        <div id="matches-view" class="view"><div class="page-heading"><div><div class="eyebrow">complete record</div><h2>Every match</h2></div><span class="record-pill" id="matches-count-label">0 logged</span></div><div id="all-matches" class="match-list"></div></div>
+        <div id="opponents-view" class="view">
+          <div class="page-heading"><div><div class="eyebrow">head to head</div><h2>Opponent index</h2></div><span class="record-pill" id="opponents-count-label">0 opponents</span></div>
+          <div class="segmented" role="group" aria-label="Filter opponents">
+            <button type="button" class="segment active" data-opponent-filter="all">All opponents</button>
+            <button type="button" class="segment" data-opponent-filter="rematch">Met at 2+ competitions <span id="rematch-count" class="segment-count">0</span></button>
+          </div>
+          <div id="all-opponents" class="opponent-grid"></div>
+        </div>
+        <div id="reports-view" class="view">
+          <div class="page-heading"><div><div class="eyebrow">progress report</div><h2>Reports</h2></div><span class="record-pill" id="reports-count-label">0 competitions</span></div>
+          <section class="chart-card">
+            <div class="chart-head"><div><h3>Competition history</h3><p class="chart-sub">Newest first. Medals come from Smoothcomp division results and the Jits.gg Tournaments tab.</p></div></div>
+            <div class="table-scroll"><table id="competition-table" class="competition-table"></table></div>
+            <p id="competition-empty" class="chart-empty" hidden>No competitions yet.</p>
+          </section>
+          <section class="chart-card">
+            <div class="chart-head"><div><h3>Weight class over time</h3><p class="chart-sub">Lightest weight-class limit entered at each competition (lbs), from the division names.</p></div></div>
+            <div class="chart" id="weight-chart"></div>
+            <details class="chart-table"><summary>Show table</summary><div class="table-scroll"><table id="weight-table"></table></div></details>
+          </section>
+          <section class="chart-card">
+            <div class="chart-head"><div><h3>Wins and losses per competition</h3><p class="chart-sub">Wins above the line, losses below, oldest competition first.</p></div><div class="legend"><span><i class="key win"></i>Wins</span><span><i class="key loss"></i>Losses</span></div></div>
+            <div class="chart" id="results-chart"></div>
+            <details class="chart-table"><summary>Show table</summary><div class="table-scroll"><table id="results-table"></table></div></details>
+          </section>
+        </div>
+        <div id="sources-view" class="view"><div class="page-heading"><div><div class="eyebrow">keep it current</div><h2>Sources & sync</h2></div></div><section class="source-panel"><div class="source-icon">↗</div><div><h3>Bring in new results</h3><p>Export or prepare a JSON file with the format below, then import it here. Your journal is stored locally and never uploaded.</p><button class="primary-button" id="source-import">Import JSON <span>⇧</span></button></div></section><section class="source-panel muted"><div class="source-icon">◎</div><div><h3>Connector-ready</h3><p>Smoothcomp profiles can be private, so its connector will need an authenticated local service. Jits.gg can be connected by public profile URL. Credentials should live in a local environment file, never in this page.</p><code>kids.json · matches.json · .env.local</code></div></section></div>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status"></div>
+    <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
+    <script src="app.js"></script>
+  </body>
+</html>
